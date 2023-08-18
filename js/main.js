@@ -3,7 +3,7 @@ const FIGURE = {
     WIDTH: 600
 };
 const MARGINS = {
-    LEFT: 50,
+    LEFT: 75,
     TOP: 30,
     RIGHT: 100,
     BOTTOM: 75
@@ -72,14 +72,16 @@ Promise.all(promises).then(function(promisedData){
             .attr("y", 2)
             .attr("x", -10); // NOTE: x and y now relate to the text's rotated grid
 
+    // X Axis Title
     const xLabel = plot
         .append('g')    
             .attr('class', 'x-label')
             .attr('transform', `translate(${PLOT.WIDTH / 2}, ${FIGURE.HEIGHT})`)
         .append('text')
-            .attr('text-anchor', 'center')
+            .style('text-anchor', 'center')
             .attr('y', -40)
             .text('Time')
+        
     // Include actual data into y scale
     y.domain([18, d3.max(cleanWeights.map(d => d.BMI)) + 2])
     const yAxis = plot
@@ -87,6 +89,16 @@ Promise.all(promises).then(function(promisedData){
             .attr('class', 'y-axis')
             .call(yAxisCall);
 
+    const yLabel = plot
+        .append('g')
+            .attr('class', 'y-label')   
+            .attr('transform', `translate(0, ${PLOT.HEIGHT/2})`)
+        .append('text')
+            .style('text-anchor', 'center')
+            .attr('transform', 'rotate(-90)')
+            .attr('y', -40)
+            .text('BMI')
+            
     // Add Color/Text Legend for all unique Scale IDs in data
     const uniqueScales = cleanWeights
         .map(d => d["Scale [ID]"])
