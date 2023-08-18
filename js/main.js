@@ -4,7 +4,7 @@ const FIGURE = {
 };
 const MARGINS = {
     LEFT: 75,
-    TOP: 30,
+    TOP: 75,
     RIGHT: 100,
     BOTTOM: 75
 };
@@ -78,10 +78,10 @@ Promise.all(promises).then(function(promisedData){
             .attr('class', 'x-label')
             .attr('transform', `translate(${PLOT.WIDTH / 2}, ${FIGURE.HEIGHT})`)
         .append('text')
-            .style('text-anchor', 'center')
-            .attr('y', -40)
+            .style('text-anchor', 'middle')
+            .attr('y', -90)
             .text('Time')
-        
+
     // Include actual data into y scale
     y.domain([18, d3.max(cleanWeights.map(d => d.BMI)) + 2])
     const yAxis = plot
@@ -89,16 +89,26 @@ Promise.all(promises).then(function(promisedData){
             .attr('class', 'y-axis')
             .call(yAxisCall);
 
+    // Add Y axis label
     const yLabel = plot
         .append('g')
             .attr('class', 'y-label')   
             .attr('transform', `translate(0, ${PLOT.HEIGHT/2})`)
         .append('text')
-            .style('text-anchor', 'center')
+            .style('text-anchor', 'middle')
             .attr('transform', 'rotate(-90)')
             .attr('y', -40)
             .text('BMI')
-            
+    
+    // Plot title
+    const title = plot
+        .append('g')
+            .attr('class', 'title')
+            .attr('transform', `translate(${PLOT.WIDTH/2}, 0)`)
+        .append('text')
+            .text("A Person's BMI over the months")
+            .style('text-anchor', 'middle')
+    
     // Add Color/Text Legend for all unique Scale IDs in data
     const uniqueScales = cleanWeights
         .map(d => d["Scale [ID]"])
