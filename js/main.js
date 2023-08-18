@@ -6,7 +6,7 @@ const MARGINS = {
     LEFT: 50,
     TOP: 30,
     RIGHT: 100,
-    BOTTOM: 100
+    BOTTOM: 75
 };
 const PLOT = {
     HEIGHT: FIGURE.HEIGHT - MARGINS.BOTTOM - MARGINS.TOP,
@@ -60,21 +60,32 @@ Promise.all(promises).then(function(promisedData){
 
     // Include actual data into x scale
     x.domain(d3.extent(cleanWeights.map(d => d.Date)));
-    const xAxis = plot.append('g')
-        .attr('class', 'x-axis')
-        .attr('transform', `translate(0, ${PLOT.HEIGHT})`)
-        .call(xAxisCall)
+    const xAxis = plot
+        .append('g')
+            .attr('class', 'x-axis')
+            .attr('transform', `translate(0, ${PLOT.HEIGHT})`)
+            .call(xAxisCall);
+    xAxis
         .selectAll('text')
-        .style('text-anchor', 'end')
-        .attr('transform', 'rotate(-65)')
-        .attr("y", 2)
-        .attr("x", -10);
+            .style('text-anchor', 'end')
+            .attr('transform', 'rotate(-65)')
+            .attr("y", 2)
+            .attr("x", -10); // NOTE: x and y now relate to the text's rotated grid
 
+    const xLabel = plot
+        .append('g')    
+            .attr('class', 'x-label')
+            .attr('transform', `translate(${PLOT.WIDTH / 2}, ${FIGURE.HEIGHT})`)
+        .append('text')
+            .attr('text-anchor', 'center')
+            .attr('y', -40)
+            .text('Time')
     // Include actual data into y scale
     y.domain([18, d3.max(cleanWeights.map(d => d.BMI)) + 2])
-    const yAxis = plot.append('g')
-        .attr('class', 'y-axis')
-        .call(yAxisCall);
+    const yAxis = plot
+        .append('g')
+            .attr('class', 'y-axis')
+            .call(yAxisCall);
 
     // Add Color/Text Legend for all unique Scale IDs in data
     const uniqueScales = cleanWeights
@@ -82,7 +93,7 @@ Promise.all(promises).then(function(promisedData){
         .filter((value, index, array) => array.indexOf(value) === index); 
     const legend = plot
         .append('g')
-        .attr('transform', `translate(${PLOT.WIDTH}, 0)`);
+            .attr('transform', `translate(${PLOT.WIDTH}, 0)`);
     uniqueScales.forEach((d, i) => {
         const legendRow = legend
             .append('g')
