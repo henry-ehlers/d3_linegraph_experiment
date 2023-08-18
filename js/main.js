@@ -70,7 +70,7 @@ Promise.all(promises).then(function(promisedData){
         .attr('class', 'y-axis')
         .call(yAxis);
 
-    // Add Legend
+    // Add Color/Text Legend for all unique Scale IDs in data
     const uniqueScales = cleanWeights
         .map(d => d["Scale [ID]"])
         .filter((value, index, array) => array.indexOf(value) === index); 
@@ -80,16 +80,16 @@ Promise.all(promises).then(function(promisedData){
     uniqueScales.forEach((d, i) => {
         const legendRow = legend
             .append('g')
-            .attr('transform', `translate(10, ${i*20})`)
+            .attr('transform', `translate(10, ${i*20})`);
         legendRow
             .append('circle')
             .attr('r', 5)
-            .attr('fill', color(d))
+            .attr('fill', color(d));
         legendRow
             .append('text')
             .attr('x', 10)
             .attr('y', 5)
-            .text(d)
+            .text(d);
     });
 
     // Join and enter data as circles
