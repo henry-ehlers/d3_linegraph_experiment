@@ -52,10 +52,17 @@ Promise.all(promises).then(function(promisedData){
     plot.append('g')
         .attr('class', 'y-axis')
         .call(yAxis);
-        // plot.append('g')
-    //     .attr('class', 'plot')
-    //     .attr('height', PLOT.HEIGHT)
-    //     .attr('width', PLOT.HEIGHT);
+
+    plot.selectAll('circle')
+        .data(weights)
+        .enter()
+        .append('circle')
+            .attr('cx', d => x(d.Date))
+            .attr('cy', d => y(d.BMI))
+            .attr('r', 1)
+            .attr('fill', 'black')
+
+    
     
 
 }).catch(function(error){
