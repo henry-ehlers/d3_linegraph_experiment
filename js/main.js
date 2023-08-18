@@ -65,7 +65,7 @@ Promise.all(promises).then(function(promisedData){
         .call(xAxis);
 
     // Include actual data into y scale
-    y.domain([0, d3.max(cleanWeights.map(d => d.BMI))])
+    y.domain([18, d3.max(cleanWeights.map(d => d.BMI)) + 2])
     plot.append('g')
         .attr('class', 'y-axis')
         .call(yAxis);
@@ -89,11 +89,25 @@ Promise.all(promises).then(function(promisedData){
             .append('text')
             .attr('x', 10)
             .attr('y', 5)
+            .style('text-transform', 'capitalize')
             .text(d);
     });
 
+    // Join and enter data as line generator
+    const line = d3.line()
+        .x(d => x(d.Date))
+        .y(d => y(d.BMI))
+
+    const lineGraph = plot
+        .append('path')
+        .attr('fill', 'none')
+        .attr('stroke', 'grey')
+        .attr('stroke-width', 0.5)
+        .attr('d', line(cleanWeights))
+
     // Join and enter data as circles
-    plot.selectAll('circle')
+    const scatterGraph = plot
+        .selectAll('circle')
         .data(cleanWeights)
         .enter()
         .append('circle')
