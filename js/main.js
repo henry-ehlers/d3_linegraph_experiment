@@ -70,6 +70,28 @@ Promise.all(promises).then(function(promisedData){
         .attr('class', 'y-axis')
         .call(yAxis);
 
+    // Add Legend
+    const uniqueScales = cleanWeights
+        .map(d => d["Scale [ID]"])
+        .filter((value, index, array) => array.indexOf(value) === index); 
+    legend = plot
+        .append('g')
+        .attr('transform', `translate(${PLOT.WIDTH}, 0)`);
+    uniqueScales.forEach((d, i) => {
+        const legendRow = legend
+            .append('g')
+            .attr('transform', `translate(10, ${i*20})`)
+        legendRow
+            .append('circle')
+            .attr('r', 5)
+            .attr('fill', color(d))
+        legendRow
+            .append('text')
+            .attr('x', 10)
+            .attr('y', 5)
+            .text(d)
+    });
+
     // Join and enter data as circles
     plot.selectAll('circle')
         .data(cleanWeights)
@@ -79,9 +101,6 @@ Promise.all(promises).then(function(promisedData){
             .attr('cy', d => y(d.BMI))
             .attr('r', 1)
             .attr('fill', d => color(d["Scale [ID]"]))
-
-    
-    
 
 }).catch(function(error){
     console.log(error)
