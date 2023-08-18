@@ -5,7 +5,7 @@ const FIGURE = {
 const MARGINS = {
     LEFT: 30,
     TOP: 30,
-    RIGHT: 30,
+    RIGHT: 100,
     BOTTOM: 30
 };
 const PLOT = {
@@ -15,15 +15,22 @@ const PLOT = {
 
 const promises = [d3.csv("./data/daily_weight.csv")];
 
+// Define data-independent range of x scale
 let x = d3.scaleTime()
     .range([0, PLOT.WIDTH]);
 
-let xAxis = d3.axisBottom(x)
+// Define properties of x axis
+let xAxis = d3.axisBottom(x);
 
+// Define data-independent range of y scale
 let y = d3.scaleLinear()
     .range([PLOT.HEIGHT, 0]);
 
+// Define properties of y axis
 let yAxis = d3.axisLeft(y);
+
+// Define ordinal color-scale
+let color = d3.scaleOrdinal(d3.schemeDark2);
 
 Promise.all(promises).then(function(promisedData){
     const weights = promisedData[0];
@@ -34,6 +41,8 @@ Promise.all(promises).then(function(promisedData){
         d.Date = timeParser(d.Date);
         d.BMI = Number(d.BMI);    
     });
+
+    // Filter out missing data (i.e. BMI != 0)
     console.log(weights);
     const cleanWeights = weights.filter(d => d.BMI > 0) 
     console.log(cleanWeights);
@@ -47,7 +56,7 @@ Promise.all(promises).then(function(promisedData){
     // Create group for actual plot area within margins
     let plot = svg.append('g')
         .attr('transform', `translate(${MARGINS.LEFT}, ${MARGINS.TOP})`);
-    
+
     // Include actual data into x scale
     x.domain(d3.extent(cleanWeights.map(d => d.Date)));
     plot.append('g')
@@ -69,7 +78,7 @@ Promise.all(promises).then(function(promisedData){
             .attr('cx', d => x(d.Date))
             .attr('cy', d => y(d.BMI))
             .attr('r', 1)
-            .attr('fill', 'black')
+            .attr('fill', d => color(d["Scale [ID]"]))
 
     
     
