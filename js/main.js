@@ -3,10 +3,10 @@ const FIGURE = {
     WIDTH: 600
 };
 const MARGINS = {
-    LEFT: 30,
+    LEFT: 50,
     TOP: 30,
     RIGHT: 100,
-    BOTTOM: 30
+    BOTTOM: 100
 };
 const PLOT = {
     HEIGHT: FIGURE.HEIGHT - MARGINS.BOTTOM - MARGINS.TOP,
@@ -16,28 +16,28 @@ const PLOT = {
 const promises = [d3.csv("./data/daily_weight.csv")];
 
 // Define data-independent range of x scale
-let x = d3.scaleTime()
+const x = d3.scaleTime()
     .range([0, PLOT.WIDTH]);
 
 // Define properties of x axis
-let xAxis = d3.axisBottom(x)
+const xAxisCall = d3.axisBottom(x)
 
 // Define data-independent range of y scale
-let y = d3.scaleLinear()
+const y = d3.scaleLinear()
     .range([PLOT.HEIGHT, 0]);
 
 // Define properties of y axis
-let yAxis = d3.axisLeft(y)
+const yAxisCall = d3.axisLeft(y)
     .tickSizeOuter(0);
 
 // Define ordinal color-scale
-let color = d3.scaleOrdinal(d3.schemeDark2);
+const color = d3.scaleOrdinal(d3.schemeDark2);
 
 Promise.all(promises).then(function(promisedData){
     const weights = promisedData[0];
     
     // Format data to match actual types required
-    let timeParser = d3.timeParse('%m/%d/%Y')
+    const timeParser = d3.timeParse('%m/%d/%Y')
     weights.forEach(d => {
         d.Date = timeParser(d.Date);
         d.BMI = Number(d.BMI);    
@@ -49,33 +49,38 @@ Promise.all(promises).then(function(promisedData){
     console.log(cleanWeights);
 
     // Create svg in chart area
-    let svg = d3.select("#chart-area")
+    const svg = d3.select("#chart-area")
         .append('svg')
             .attr('width', FIGURE.WIDTH)
             .attr('height', FIGURE.HEIGHT);
 
     // Create group for actual plot area within margins
-    let plot = svg.append('g')
+    const plot = svg.append('g')
         .attr('transform', `translate(${MARGINS.LEFT}, ${MARGINS.TOP})`);
 
     // Include actual data into x scale
     x.domain(d3.extent(cleanWeights.map(d => d.Date)));
-    plot.append('g')
+    const xAxis = plot.append('g')
         .attr('class', 'x-axis')
         .attr('transform', `translate(0, ${PLOT.HEIGHT})`)
-        .call(xAxis);
+        .call(xAxisCall)
+        .selectAll('text')
+        .style('text-anchor', 'end')
+        .attr('transform', 'rotate(-65)')
+        .attr("y", 2)
+        .attr("x", -10);
 
     // Include actual data into y scale
     y.domain([18, d3.max(cleanWeights.map(d => d.BMI)) + 2])
-    plot.append('g')
+    const yAxis = plot.append('g')
         .attr('class', 'y-axis')
-        .call(yAxis);
+        .call(yAxisCall);
 
     // Add Color/Text Legend for all unique Scale IDs in data
     const uniqueScales = cleanWeights
         .map(d => d["Scale [ID]"])
         .filter((value, index, array) => array.indexOf(value) === index); 
-    legend = plot
+    const legend = plot
         .append('g')
         .attr('transform', `translate(${PLOT.WIDTH}, 0)`);
     uniqueScales.forEach((d, i) => {
