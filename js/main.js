@@ -20,14 +20,15 @@ let x = d3.scaleTime()
     .range([0, PLOT.WIDTH]);
 
 // Define properties of x axis
-let xAxis = d3.axisBottom(x);
+let xAxis = d3.axisBottom(x)
 
 // Define data-independent range of y scale
 let y = d3.scaleLinear()
     .range([PLOT.HEIGHT, 0]);
 
 // Define properties of y axis
-let yAxis = d3.axisLeft(y);
+let yAxis = d3.axisLeft(y)
+    .tickSizeOuter(0);
 
 // Define ordinal color-scale
 let color = d3.scaleOrdinal(d3.schemeDark2);
@@ -97,7 +98,6 @@ Promise.all(promises).then(function(promisedData){
     const line = d3.line()
         .x(d => x(d.Date))
         .y(d => y(d.BMI))
-
     const lineGraph = plot
         .append('path')
         .attr('fill', 'none')
