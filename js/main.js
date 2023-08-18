@@ -33,6 +33,36 @@ const yAxisCall = d3.axisLeft(y)
 // Define ordinal color-scale
 const color = d3.scaleOrdinal(d3.schemeDark2);
 
+// Healthy BMI Area generator
+const severlyUnderweightBMI = d3.area()
+        .x(function(d) {return x(d.Date);})
+        .y0(function(d) {return y(0);})
+        .y1(function(d) {return y(16);})
+
+// Healthy BMI Area generator
+const underweightBMI = d3.area()
+        .x(function(d) {return x(d.Date);})
+        .y0(function(d) {return y(16);})
+        .y1(function(d) {return y(18);})
+
+// Healthy BMI Area generator
+const healthyBMI = d3.area()
+        .x(function(d) {return x(d.Date);})
+        .y0(function(d) {return y(18);})
+        .y1(function(d) {return y(24);})
+
+// Healthy BMI Area generator
+const overweightBMI = d3.area()
+        .x(function(d) {return x(d.Date);})
+        .y0(function(d) {return y(24);})
+        .y1(function(d) {return y(29);})
+
+// Obese BMI Area generator
+const obeseBMI = d3.area()
+        .x(function(d) {return x(d.Date);})
+        .y0(function(d) {return y(29);})
+        .y1(function(d) {return y(30);})
+
 Promise.all(promises).then(function(promisedData){
     const weights = promisedData[0];
     
@@ -83,7 +113,7 @@ Promise.all(promises).then(function(promisedData){
             .text('Time')
 
     // Include actual data into y scale
-    y.domain([18, d3.max(cleanWeights.map(d => d.BMI)) + 2])
+    y.domain([0, d3.max(cleanWeights.map(d => d.BMI)) + 2])
     const yAxis = plot
         .append('g')
             .attr('class', 'y-axis')
@@ -116,10 +146,17 @@ Promise.all(promises).then(function(promisedData){
     const legend = plot
         .append('g')
             .attr('transform', `translate(${PLOT.WIDTH}, 0)`);
+    legend
+        .append('g')
+        .attr('transform', `translate(5, 0)`)
+        .append('text')
+        .text('Scale Location')
+        .attr('y', 5)
+        
     uniqueScales.forEach((d, i) => {
         const legendRow = legend
             .append('g')
-            .attr('transform', `translate(10, ${i*20})`);
+            .attr('transform', `translate(10, ${(i+1)*20})`);
         legendRow
             .append('circle')
             .attr('r', 5)
@@ -131,6 +168,41 @@ Promise.all(promises).then(function(promisedData){
             .style('text-transform', 'capitalize')
             .text(d);
     });
+
+    // Create Area Plots for different BMI categories
+    const severlyUnderweightBMIArea = plot
+        .append('path')
+        .attr('fill', 'red')
+        .attr('d', severlyUnderweightBMI(cleanWeights))
+        .style('opacity', '0.1')
+
+    // Create Area Plots for different BMI categories
+    const underweightBMIArea = plot
+        .append('path')
+        .attr('fill', 'orange')
+        .attr('d', underweightBMI(cleanWeights))
+        .style('opacity', '0.1')
+
+    // Create Area Plots for different BMI categories
+    const healthyBMIArea = plot
+        .append('path')
+        .attr('fill', 'green')
+        .attr('d', healthyBMI(cleanWeights))
+        .style('opacity', '0.1')
+
+    // Create Area Plots for different BMI categories
+    const overweightBMIArea = plot
+        .append('path')
+        .attr('fill', 'orange')
+        .attr('d', overweightBMI(cleanWeights))
+        .style('opacity', '0.1')
+
+    // Create Area Plots for different BMI categories
+    const obeseBMIArea = plot
+        .append('path')
+        .attr('fill', 'red')
+        .attr('d', obeseBMI(cleanWeights))
+        .style('opacity', '0.1')
 
     // Join and enter data as line generator
     const line = d3.line()
